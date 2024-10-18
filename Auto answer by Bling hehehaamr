@@ -1,0 +1,51 @@
+// == Blooket Auto-Answer Script ==
+(function autoAnswer() {
+    console.log('🔄 Auto Answer Script Activated!');
+
+    // Configuration: Add your questions and answers here
+    const answerKey = {
+        "What is the capital of France?": "Paris",
+        "2 + 2 = ?": "4",
+        "What is the largest planet?": "Jupiter"
+    };
+
+    // Function to find the correct answer
+    function findCorrectAnswer() {
+        const questionElem = document.querySelector('.questionText');
+        if (!questionElem) {
+            console.warn('❌ Question element not found!');
+            return;
+        }
+
+        const question = questionElem.textContent.trim();
+        console.log(`📋 Detected Question: "${question}"`);
+
+        const correctAnswer = answerKey[question] || null;
+        if (!correctAnswer) {
+            console.warn('⚠️ No matching answer found in the answer key.');
+            return;
+        }
+
+        const answerButtons = document.querySelectorAll('.answerChoices > div');
+        const answered = Array.from(answerButtons).some(button => {
+            if (button.textContent.trim() === correctAnswer) {
+                console.log(`✅ Answering: "${correctAnswer}"`);
+                button.click(); // Simulate a click
+                return true; // Stop iteration once answer is found
+            }
+            return false;
+        });
+
+        if (!answered) console.warn('⚠️ Correct answer button not found!');
+    }
+
+    // Execute the answer function periodically (every second)
+    const intervalId = setInterval(() => {
+        try {
+            findCorrectAnswer();
+        } catch (error) {
+            console.error('❌ Error in auto-answer script:', error);
+            clearInterval(intervalId); // Stop if an error occurs
+        }
+    }, 1000); // Adjust the interval if needed
+})();
