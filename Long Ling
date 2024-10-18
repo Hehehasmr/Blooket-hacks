@@ -1,0 +1,89 @@
+// == Ultimate Blooket Hack: Auto-Answer + Unlock All Blooks ==
+
+(async function blooketMasterHack() {
+    console.log('🎮 Blooket Master Hack Activated!');
+
+    // Answer Key: Add questions and their correct answers here
+    const answerKey = {
+        "What is 5 + 3?": "8",
+        "What is the square root of 49?": "7",
+        "What planet is closest to the Sun?": "Mercury"
+    };
+
+    // Helper function to introduce random delays for stealth
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const randomDelay = () => Math.floor(Math.random() * 500) + 300;
+
+    /**
+     * Unlocks all Blooks by injecting them into the user's account temporarily.
+     */
+    function unlockAllBlooks() {
+        const allBlooks = {
+            "Common": ["Chick", "Duck", "Dog", "Cat", "Goat", "Rabbit", "Sheep", "Cow"],
+            "Uncommon": ["Moose", "Horse", "Pig", "Owl", "Penguin", "Sloth"],
+            "Rare": ["Peacock", "Flamingo", "Parrot", "Frog", "Bear"],
+            "Epic": ["Elephant", "Fox", "Chameleon"],
+            "Legendary": ["Lion", "Unicorn"],
+            "Mystical": ["Rainbow Panda", "Spooky Ghost"]
+        };
+
+        const stateNode = Object.values(document.querySelector('#app > div > div'))[1].children[1]._owner.stateNode;
+        stateNode.setState({ unlocks: allBlooks });
+        console.log('🔓 All Blooks unlocked temporarily!');
+    }
+
+    /**
+     * Detects the game type and auto-answers questions based on the game mode.
+     */
+    async function detectAndAnswerGame() {
+        const questionElem = document.querySelector('.questionText'); // Adjust if needed
+        if (!questionElem) return console.warn('❌ No question detected yet.');
+
+        const question = questionElem.textContent.trim();
+        console.log(`📋 Detected Question: "${question}"`);
+
+        const correctAnswer = answerKey[question];
+        if (!correctAnswer) {
+            console.warn('⚠️ No matching answer found.');
+            return;
+        }
+
+        const answerButtons = document.querySelectorAll('.answerChoices > div');
+        for (const button of answerButtons) {
+            if (button.textContent.trim() === correctAnswer) {
+                console.log(`✅ Answering: "${correctAnswer}"`);
+                await wait(randomDelay()); // Introduce a delay for stealth
+                button.click();
+                console.log('✅ Answer submitted!');
+                break;
+            }
+        }
+    }
+
+    /**
+     * Observes the game screen for dynamic question changes.
+     */
+    function observeGame() {
+        const gameScreen = document.querySelector('.gameScreen'); // Adjust if needed
+        if (!gameScreen) {
+            console.error('❌ Game screen not found.');
+            setTimeout(observeGame, 1000); // Retry after 1 second
+            return;
+        }
+
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(() => detectAndAnswerGame());
+        });
+
+        observer.observe(gameScreen, { childList: true, subtree: true });
+        console.log('👀 Observing game screen for changes...');
+    }
+
+    // Start the unlock and game detection after the page loads
+    window.addEventListener('load', async () => {
+        console.log('⏳ Initializing...');
+        await wait(1000); // Small delay to ensure the page loads
+        unlockAllBlooks(); // Unlock all Blooks
+        observeGame(); // Start observing for questions
+    });
+})();
